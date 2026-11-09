@@ -81,10 +81,61 @@ func (seg *Segtree[S]) Set(i int, x S) {
 	}
 }
 
-func (seg *Segtree[S]) MaxRight(l int, f func(S) bool) {
-
+func (seg *Segtree[S]) MaxRight(l int, f func(S) bool) int {
+	if l == seg._n {
+		return seg._n
+	}
+	l += seg._size
+	sum := seg._e
+	for {
+		for l&1 == 0 {
+			l >>= 1
+		}
+		if !f(seg._op(sum, seg._data[l])) {
+			for l < seg._size {
+				l <<= 1
+				if f(seg._op(sum, seg._data[l])) {
+					sum = seg._op(sum, seg._data[l])
+					l++
+				}
+			}
+			return l - seg._size
+		}
+		sum = seg._op(sum, seg._data[l])
+		l++
+		if l&(l-1) == 0 {
+			break
+		}
+	}
+	return seg._n
 }
 
-func (seg *Segtree[S]) MinLeft(l int, f func(S) bool) {
-
+func (seg *Segtree[S]) MinLeft(r int, f func(S) bool) int {
+	if r == 0 {
+		return 0
+	}
+	r += seg._size
+	sum := seg._e
+	for {
+		r--
+		for r&1 != 0 && r > 1 {
+			r >>= 1
+		}
+		if !f(seg._op(seg._data[r], sum)) {
+			for r < seg._size {
+				r <<= 1
+				r++
+				if f(seg._op(seg._data[r], sum)) {
+					sum = seg._op(seg._data[r], sum)
+					r--
+				}
+			}
+			return r + 1 - seg._size
+		}
+		sum = seg._op(seg._data[r], sum)
+		if r&(r-1) == 0 {
+			break
+		}
+	}
+	return 0
 }
