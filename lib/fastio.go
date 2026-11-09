@@ -37,6 +37,12 @@ func (s *Scanner) Int() int {
 	return int(s.Int64())
 }
 
+func (s *Scanner) Ints(ptrs ...*int) {
+	for _, ptr := range ptrs {
+		*ptr = s.Int()
+	}
+}
+
 // Int64 reads the next space-delimited token as an int64.
 func (s *Scanner) Int64() int64 {
 	b := s.skipWhitespace()

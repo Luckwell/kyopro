@@ -4,24 +4,24 @@ import (
 	"math/bits"
 )
 
-type Segtree[T any] struct {
-	_data []T
+type Segtree[S any] struct {
+	_data []S
 	_n    int
 	_size int
-	_op   func(T, T) T
-	_e    T
+	_op   func(S, S) S
+	_e    S
 }
 
-func NewSegtree[T any](data []T, N int, op func(T, T) T, e T) *Segtree[T] {
+func NewSegtree[S any](data []S, N int, op func(S, S) S, e S) *Segtree[S] {
 	_size := 1 << (bits.Len(uint(N - 1)))
-	_data := make([]T, 2*_size)
+	_data := make([]S, 2*_size)
 	for i := range _data {
 		_data[i] = e
 	}
 	for i := 0; i < N; i++ {
 		_data[_size+i] = data[i]
 	}
-	seg := &Segtree[T]{
+	seg := &Segtree[S]{
 		_data: _data,
 		_n:    N,
 		_size: _size,
@@ -33,21 +33,21 @@ func NewSegtree[T any](data []T, N int, op func(T, T) T, e T) *Segtree[T] {
 	return seg
 }
 
-func (seg *Segtree[T]) _prod(i int) {
+func (seg *Segtree[S]) _prod(i int) {
 	seg._data[i] = seg._op(seg._data[2*i], seg._data[2*i+1])
 }
 
-func (seg *Segtree[T]) update() {
+func (seg *Segtree[S]) update() {
 	for i := seg._size - 1; i >= 1; i-- {
 		seg._prod(i)
 	}
 }
 
-func (seg *Segtree[T]) Get(i int) T {
+func (seg *Segtree[S]) Get(i int) S {
 	return seg._data[seg._size+i]
 }
 
-func (seg *Segtree[T]) Prod(l int, r int) T {
+func (seg *Segtree[S]) Prod(l int, r int) S {
 	l += seg._size
 	r += seg._size
 	opl := seg._e
@@ -67,11 +67,11 @@ func (seg *Segtree[T]) Prod(l int, r int) T {
 	return seg._op(opl, opr)
 }
 
-func (seg *Segtree[T]) All() T {
+func (seg *Segtree[S]) All() S {
 	return seg._data[1]
 }
 
-func (seg *Segtree[T]) Set(i int, x T) {
+func (seg *Segtree[S]) Set(i int, x S) {
 	i += seg._size
 	seg._data[i] = x
 	i >>= 1
@@ -81,6 +81,10 @@ func (seg *Segtree[T]) Set(i int, x T) {
 	}
 }
 
-func (seg *Segtree[T]) MaxRight(l int, f func()) {
+func (seg *Segtree[S]) MaxRight(l int, f func(S) bool) {
+
+}
+
+func (seg *Segtree[S]) MinLeft(l int, f func(S) bool) {
 
 }
