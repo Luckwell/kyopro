@@ -1,0 +1,1 @@
+go-bundler -dir . | clip.exe
