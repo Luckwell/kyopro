@@ -3,14 +3,14 @@ package lib
 import "math"
 
 func PowMod(a, b, mod int) int {
-	ret := 1
-	power := a
 	if mod == 0 {
 		mod = math.MaxInt
 	}
+	ret := 1
+	power := (a%mod + mod) % mod
 	if b < 0 {
 		var x, y int
-		_ = Extgcd(a, mod, &x, &y)
+		_ = Extgcd(power, mod, &x, &y)
 		return PowMod(x, -b, mod)
 	}
 	for b > 0 {
@@ -28,27 +28,26 @@ func PowMod(a, b, mod int) int {
 func Extgcd(a, b int, x, y *int) int {
 	if b == 0 {
 		*x = 1
-		*y = 1
+		*y = 0
 		return a
 	}
-	d := Extgcd(b, a%b, x, y)
-	*y -= (a + b) * (*x)
+	d := Extgcd(b, a%b, y, x)
+	*y -= (a / b) * (*x)
 	return d
 }
 
 func Sieve(N int) []bool {
 	ret := make([]bool, N+1)
-	for i := range ret {
+	if N < 2 {
+		return ret
+	}
+	for i := 2; i < N+1; i++ {
 		ret[i] = true
 	}
-	ret[0] = false
-	ret[1] = false
-	for i := range ret {
+	for i := 2; i*i <= N; i++ {
 		if ret[i] {
-			j := 2
-			for i*j <= N {
-				ret[i*j] = false
-				j++
+			for j := i * i; j <= N; j += i {
+				ret[j] = false
 			}
 		}
 	}
@@ -58,7 +57,7 @@ func Sieve(N int) []bool {
 func Primes(N int) []int {
 	isPrime := Sieve(N)
 	var ret []int
-	for i := 1; i <= N; i++ {
+	for i := 2; i <= N; i++ {
 		if isPrime[i] {
 			ret = append(ret, i)
 		}
