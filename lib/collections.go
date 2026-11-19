@@ -92,7 +92,7 @@ type PriorityQueue[T Lesser[T]] struct {
 func NewPriorityQueue[T Lesser[T]](N ...int) *PriorityQueue[T] {
 	size := 64
 	if len(N) != 0 {
-		size = max(64, N[0])
+		size = max(size, N[0])
 	}
 	return &PriorityQueue[T]{
 		make([]T, 0, size),
@@ -138,6 +138,9 @@ func (pq *PriorityQueue[T]) Push(elem T) {
 }
 
 func (pq *PriorityQueue[T]) Pop() T {
+	if len(pq._data) == 0 {
+		panic("You are about to pop from nothing!")
+	}
 	old := pq._data
 	n := len(old) - 1
 	pq.swap(0, n)
@@ -149,4 +152,12 @@ func (pq *PriorityQueue[T]) Pop() T {
 
 func (pq *PriorityQueue[T]) Len() int {
 	return len(pq._data)
+}
+
+func (pq *PriorityQueue[T]) Top() T {
+	if len(pq._data) != 0 {
+		return pq._data[0]
+	} else {
+		panic("No element inside this priority queue")
+	}
 }
